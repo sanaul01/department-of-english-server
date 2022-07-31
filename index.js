@@ -19,7 +19,8 @@ async function run(){
     try {
         await client.connect();
         const database = client.db('education');
-        const nineteenthCenturyNovelCollection = database.collection('19th_century_novel')
+        const nineteenthCenturyNovelCollection = database.collection('19th_century_novel', '19th_century_novel_questions')
+        const nineteenthCenturyNovelQuestions = database.collection('19th_century_novel_questions')
 
         app.post('/19th_century_novel', async (req, res) => {
             const nineteenNovel = req.body;
@@ -28,10 +29,23 @@ async function run(){
             res.json(result)
         });
 
+        app.post('/19th_century_novel_questions', async (req, res) => {
+            const nineteenNovelQuestions = req.body;
+            const result = await nineteenthCenturyNovelQuestions.insertOne(nineteenNovelQuestions)
+            console.log(result);
+            res.json(result)
+        });
+
         app.get('/19th_century_novel', async (req, res)=>{
             const cursor = nineteenthCenturyNovelCollection.find({});
             const nineteenNovel = await cursor.toArray();
             res.send(nineteenNovel)
+        });
+
+        app.get('/19th_century_novel_questions', async (req, res)=>{
+            const cursor = nineteenthCenturyNovelQuestions.find({});
+            const nineteenNovelQuestions = await cursor.toArray();
+            res.send(nineteenNovelQuestions)
         });
 
         app.get('/19th_century_novel/:id', async (req, res)=>{
